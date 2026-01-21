@@ -12,7 +12,7 @@ from garak.configurable import Configurable
 from garak.probes.base import Probe
 from garak.probes._tier import Tier
 from garak.attackmethods.base import AttackMethod
-from garak.promptgenerator.base import PromptGenerator
+from garak.payloadgenerators.base import PayloadGenerator
 
 
 class DANAdapter(Configurable):
@@ -34,7 +34,7 @@ class DANAdapter(Configurable):
     }
 
     def __init__(self,
-                 prompt_generator: PromptGenerator,
+                 prompt_generator: PayloadGenerator,
                  attack_method: AttackMethod = None,
                  config_root=_config):
         """Initialize DAN adapter

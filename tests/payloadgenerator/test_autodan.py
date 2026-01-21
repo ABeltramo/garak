@@ -6,7 +6,7 @@ import garak.generators
 import garak.probes.base
 from garak import _config, _plugins
 from garak.attempt import Conversation, Message, Turn
-from garak.promptgenerator.dan import AutoDANPromptGenerator
+from garak.payloadgenerators.dan import AutoDANPayloadGenerator
 
 
 def test_generate_prompts_without_generator():
@@ -14,7 +14,7 @@ def test_generate_prompts_without_generator():
     importlib.reload(garak._config)
     _config.load_base_config()
 
-    generator = AutoDANPromptGenerator()
+    generator = AutoDANPayloadGenerator()
 
     result = generator.generate_prompts(generator=None)
 
@@ -22,7 +22,7 @@ def test_generate_prompts_without_generator():
     assert result == []
 
 
-@patch('garak.promptgenerator.dan.autodan_generate')
+@patch('garak.payloadgenerators.dan.autodan_generate')
 def test_generate_prompts_with_generator_success(mock_autodan_generate):
     """Test successful prompt generation with a generator"""
     # Setup mock autodan function
@@ -34,7 +34,7 @@ def test_generate_prompts_with_generator_success(mock_autodan_generate):
     importlib.reload(garak._config)
     _config.load_base_config()
 
-    generator = AutoDANPromptGenerator()
+    generator = AutoDANPayloadGenerator()
     test_generator = _plugins.load_plugin("generators.test.Repeat", config_root=garak._config)
 
     result = generator.generate_prompts(generator=test_generator)
