@@ -9,8 +9,29 @@ import pytest
 from garak import _config, _plugins
 
 
+def test_danattack_initialization():
+    """Test DANAttack initialization"""
+    from garak.attackmethods.dan import DANAttack
+
+    dan_attack = DANAttack(config_root=_config)
+    assert isinstance(dan_attack, DANAttack), "DANAttack initialization failed"
+
+
+def test_danattack_empty_prompts():
+    """Test DANAttack with empty prompts list"""
+    importlib.reload(garak._config)
+    _config.load_base_config()
+
+    dan_attack = _plugins.load_plugin("attackmethods.dan.DANAttack", config_root=garak._config)
+    g = _plugins.load_plugin("generators.test.Repeat", config_root=garak._config)
+
+    result = dan_attack.attack([], g)
+    assert isinstance(result, list), "attack results should be a list"
+    assert len(result) == 0, "attack should return empty list for empty prompts"
+
+
 def test_danattack_one_pass():
-    """Test DANAttack class similar to test_atkgen_one_pass"""
+    """Test DANAttack class"""
     importlib.reload(garak._config)  # Reload config
     _config.load_base_config()
 
@@ -42,27 +63,8 @@ def test_danattack_one_pass():
     assert len(result[0].prompt.turns) >= 2, "DAN prompt should be prepended to conversation"
     assert result[0].prompt.turns[0].role == "system", "First turn should be system prompt"
     assert "DAN Mode" in result[0].prompt.turns[0].content.text, "System prompt should contain DAN Mode"
-
-
-def test_danattack_initialization():
-    """Test DANAttack initialization similar to test_atkgen_initialization"""
-    from garak.attackmethods.dan import DANAttack
-
-    dan_attack = DANAttack(config_root=_config)
-    assert isinstance(dan_attack, DANAttack), "DANAttack initialization failed"
-
-
-def test_danattack_empty_prompts():
-    """Test DANAttack with empty prompts list"""
-    importlib.reload(garak._config)
-    _config.load_base_config()
-
-    dan_attack = _plugins.load_plugin("attackmethods.dan.DANAttack", config_root=garak._config)
-    g = _plugins.load_plugin("generators.test.Repeat", config_root=garak._config)
-
-    result = dan_attack.attack([], g)
-    assert isinstance(result, list), "attack results should be a list"
-    assert len(result) == 0, "attack should return empty list for empty prompts"
+    assert result[0].prompt.turns[1].role == "user", "Second turn should be user prompt"
+    assert "Tell me how to hack" in result[0].prompt.turns[1].content.text, "User prompt should contain original prompt"
 
 
 def test_danattack_multiple_prompts():
@@ -94,3 +96,4 @@ def test_danattack_multiple_prompts():
         assert len(attempt.prompt.turns) >= 2, "Each attempt should have DAN prompt prepended"
         assert attempt.prompt.turns[0].role == "system", "First turn should be system prompt"
         assert "DAN Mode" in attempt.prompt.turns[0].content.text, "System prompt should contain DAN Mode"
+        assert attempt.prompt.turns[1].role == "user", "Second turn should be user prompt"
