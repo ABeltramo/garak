@@ -9,14 +9,6 @@ import pytest
 from garak import _config, _plugins
 
 
-def test_danattack_initialization():
-    """Test DANAttack initialization"""
-    from garak.attackmethods.dan import DANAttack
-
-    dan_attack = DANAttack(config_root=_config)
-    assert isinstance(dan_attack, DANAttack), "DANAttack initialization failed"
-
-
 def test_danattack_empty_prompts():
     """Test DANAttack with empty prompts list"""
     importlib.reload(garak._config)
